@@ -15,3 +15,6 @@
 /product-service/gradlew
 /product-service/gradlew.bat
 /product-service/gradle/
+/api/gradlew.bat
+/api/gradlew
+/api/gradle/

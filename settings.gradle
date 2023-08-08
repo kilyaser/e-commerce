@@ -1,2 +1,9 @@
 rootProject.name = 'e-commerce'
 
+include ':e-commerce:product-composite-service'
+include ':e-commerce:product-service'
+include ':e-commerce:recommendation-service'
+include ':e-commerce:review-service'
+include ':api'
+
+
