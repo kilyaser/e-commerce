@@ -4,3 +4,4 @@
 /.gradle/
 /product-servece/gradle/
 /recommendation-service/gradle/
+/review-service/gradle/
