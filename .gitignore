@@ -6,3 +6,12 @@
 /recommendation-service/gradle/
 /review-service/gradle/
 /product-composite-service/gradle/
+/product-composite-service/gradlew.bat
+/product-composite-service/gradlew
+/review-service/gradlew
+/review-service/gradlew.bat
+/recommendation-service/gradlew
+/recommendation-service/gradlew.bat
+/product-service/gradlew
+/product-service/gradlew.bat
+/product-service/gradle/
