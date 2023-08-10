@@ -1,28 +1,26 @@
-package com.arcadag.productcompositeservice.model;
+package com.arcadag.reviewservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @AllArgsConstructor
 @Getter
 @Setter
-public class Recommendation {
+public class Review {
     private Long productId;
-    private Long recommendationId;
+    private Long reviewId;
     private String author;
-    private int rate;
+    private String subject;
     private String content;
     private String serviceAddress;
 
-    public Recommendation() {
+    public Review() {
         productId = 0L;
-        recommendationId = 0L;
+        reviewId = 0L;
         author = null;
-        rate = 0;
+        subject = null;
         content = null;
         serviceAddress = null;
     }
-
 }

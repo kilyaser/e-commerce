@@ -13,3 +13,7 @@ app:
   review-service:
     host: localhost
     port: 7003
+logging:
+  level:
+    root: INFO
+    com.arcadag.productcompositeservice: DEBUG
