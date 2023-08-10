@@ -11,6 +11,7 @@ import com.arcadag.productcompositeservice.model.ServiceAddresses;
 import com.arcadag.productcompositeservice.service.ProductCompositeIntegration;
 import com.arcadag.productcompositeservice.service.ProductCompositeService;
 import com.arcadag.productcompositeservice.util.ServiceUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 public class ProductCompositeServiceImpl implements ProductCompositeService {
     private final ServiceUtil serviceUtil;
     private ProductCompositeIntegration integration;
-
+    @Autowired
     public ProductCompositeServiceImpl(ServiceUtil serviceUtil, ProductCompositeIntegration integration) {
         this.serviceUtil = serviceUtil;
         this.integration = integration;
@@ -36,7 +37,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         List<Recommendation> recommendations = integration.getRecommendations(productId);
         List<Review> reviews = integration.getReviews(productId);
 
-        return null;
+        return createProductAggregate(product, recommendations, reviews, serviceUtil.getServiceAddress());
     }
 
     private ProductAggregate createProductAggregate(Product product,

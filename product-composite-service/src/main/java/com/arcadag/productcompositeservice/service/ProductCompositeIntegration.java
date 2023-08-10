@@ -8,6 +8,7 @@ import com.arcadag.productcompositeservice.model.Recommendation;
 import com.arcadag.productcompositeservice.model.Review;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
@@ -29,11 +30,10 @@ public class ProductCompositeIntegration {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
-
     private final String productServiceUrl;
     private final String recommendationServiceUrl;
     private final String reviewServiceUrl;
-
+    @Autowired
     public ProductCompositeIntegration(
             RestTemplate restTemplate,
             ObjectMapper mapper,
