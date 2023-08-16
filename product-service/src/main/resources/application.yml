@@ -2,9 +2,16 @@ server:
   port: 7001
   error:
     include-message: always
-logging:
-  level:
-    com.arcadag.productservice: DEBUG
+
 spring:
   jpa:
     show-sql: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: product-db
+
+logging:
+  level:
+    com.arcadag.productservice: DEBUG
