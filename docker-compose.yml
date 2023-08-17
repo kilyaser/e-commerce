@@ -40,7 +40,7 @@ services:
       retries: 60
 
   mysql:
-    image: mmysql:8.1.0
+    image: mysql:8.1.0
     mem_limit: 512m
     ports:
       - "3306:3306"

@@ -41,7 +41,7 @@ public class ProductControllerImpl implements ProductController {
     public Product getProduct(Long productId) {
         log.debug("/product return the found product for product id = {}", productId);
         if (productId < 1) {
-            throw new InvalidInputException("Invalid production: " + productId);
+            throw new InvalidInputException("Invalid productId: " + productId);
         }
 
         ProductEntity entity = productRepository.findByProductId(productId).orElseThrow(() -> new NotFoundException("No product found for productId: " + productId));
