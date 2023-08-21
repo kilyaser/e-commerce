@@ -1,4 +1,6 @@
 spring.config.activate.on-profile: docker
 server.port: 8080
 
+spring.datasource:
+  url: jdbc:mysql://mysql/review-db
 

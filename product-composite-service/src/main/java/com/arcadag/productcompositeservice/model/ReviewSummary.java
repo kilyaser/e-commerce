@@ -4,11 +4,13 @@ public class ReviewSummary {
     private final Long reviewId;
     private final String author;
     private final String subject;
+    private final String content;
 
-    public ReviewSummary(Long reviewId, String author, String subject) {
+    public ReviewSummary(Long reviewId, String author, String subject, String content) {
         this.reviewId = reviewId;
         this.author = author;
         this.subject = subject;
+        this.content = content;
     }
 
     public Long getReviewId() {
@@ -21,5 +23,9 @@ public class ReviewSummary {
 
     public String getSubject() {
         return subject;
+    }
+
+    public String getContent() {
+        return content;
     }
 }

@@ -33,6 +33,7 @@ public class ProductCompositeIntegration {
     private final String productServiceUrl;
     private final String recommendationServiceUrl;
     private final String reviewServiceUrl;
+
     @Autowired
     public ProductCompositeIntegration(
             RestTemplate restTemplate,
@@ -48,6 +49,45 @@ public class ProductCompositeIntegration {
         productServiceUrl = String.format("http://%s:%d/product/", productServiceHost, productServicePort);
         recommendationServiceUrl = String.format("http://%s:%d/recommendation?productId=", recommendationServiceHost, recommendationServicePort);
         reviewServiceUrl = String.format("http://%s:%d/review?productId=", reviewServiceHost, reviewServicePort);
+    }
+
+    public Product createProduct(Product body) {
+        try {
+            String url = productServiceUrl;
+            log.debug("Will post a new product to URL: {}", url);
+
+            Product product = restTemplate.postForObject(url, body, Product.class);
+            log.debug("Create a product with id: {}", product.getProductId());
+
+            return product;
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+
+    public void deleteProduct(Long productId) {
+        try {
+            String url = productServiceUrl + "/" + productId;
+            log.debug("Will call the deleteProduct API on URL: {}", url);
+
+            restTemplate.delete(url);
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+
+    public Recommendation createRecommendation(Recommendation body) {
+        try {
+            String url = recommendationServiceUrl;
+            log.debug("Will post a new recommendation to URL: {}", url);
+
+            Recommendation recommendation = restTemplate.postForObject(url, body, Recommendation.class);
+            log.debug("Create a recommendation with id: {}", recommendation.getProductId());
+
+            return recommendation;
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
     }
 
 
@@ -101,6 +141,42 @@ public class ProductCompositeIntegration {
         }
     }
 
+    public void deleteRecommendations(Long productId) {
+        try {
+            String url = recommendationServiceUrl  + "?productId=" + productId;
+
+            log.debug("Will call the deleteRecommendations API on URL: {}", url);
+
+            restTemplate.delete(url);
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+
+    public Review createReview(Review body) {
+        try {
+            String url = reviewServiceUrl;
+            log.debug("Will post a new review to URL: {}", url);
+
+            Review review = restTemplate.postForObject(url, body, Review.class);
+            log.debug("Created a review with id: {}", review.getProductId());
+            return review;
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+    public void deleteReviews(Long productId) {
+        try {
+            String url = reviewServiceUrl + "?productId=" + productId;
+            log.debug("Will call the deleteReviews API on URL: {}", url);
+
+            restTemplate.delete(url);
+
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+
     public List<Review> getReviews(Long productId) {
         try {
             String url = reviewServiceUrl + productId;
@@ -118,5 +194,18 @@ public class ProductCompositeIntegration {
             return new ArrayList<>();
         }
     }
+
+    private RuntimeException handleHttpClientException(HttpClientErrorException ex) {
+        HttpStatusCode statusCode = ex.getStatusCode();
+        if (statusCode.equals(NOT_FOUND)) {
+            return new NotFoundException(getErrorMessage(ex));
+        } else if (statusCode.equals(UNPROCESSABLE_ENTITY)) {
+            return new InvalidInputException(getErrorMessage(ex));
+        }
+        log.warn("Got an unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
+        log.warn("Error body: {}", ex.getResponseBodyAsString());
+        return ex;
+    }
+
 
 }
