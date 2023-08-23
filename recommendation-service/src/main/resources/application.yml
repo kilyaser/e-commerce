@@ -1,6 +1,16 @@
 server:
   port: 7002
 
+
+spring:
+  jpa:
+    show-sql: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: recommendation-db
+
 logging:
   level:
     root: INFO

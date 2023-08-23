@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -46,7 +48,7 @@ public class ProductCompositeIntegration {
             @Value("${app.review-service.port}") int reviewServicePort) {
         this.restTemplate = restTemplate;
         this.mapper = mapper;
-        productServiceUrl = String.format("http://%s:%d/product/", productServiceHost, productServicePort);
+        productServiceUrl = String.format("http://%s:%d/product", productServiceHost, productServicePort);
         recommendationServiceUrl = String.format("http://%s:%d/recommendation?productId=", recommendationServiceHost, recommendationServicePort);
         reviewServiceUrl = String.format("http://%s:%d/review?productId=", reviewServiceHost, reviewServicePort);
     }

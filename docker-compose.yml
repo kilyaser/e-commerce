@@ -7,17 +7,22 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
+
   recommendation:
     build: recommendation-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
+
   review:
     build: review-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   product-composite:
     build: product-composite-service
