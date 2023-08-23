@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
 
 public interface ReviewService {
 
@@ -15,14 +16,14 @@ public interface ReviewService {
             value = "/review",
             consumes = "application/json",
             produces = "application/json")
-    Review createReview(@RequestBody Review body);
+    Mono<Review> createReview(@RequestBody Review body);
 
 
     @GetMapping(
             value = "/review",
             produces = "application/json")
-    List<Review> getReviews(@RequestParam(value = "productId", required = true) Long productId);
+    Flux<Review> getReviews(@RequestParam(value = "productId", required = true) Long productId);
 
     @DeleteMapping(value = "/review")
-    void deleteReviews(@RequestParam(value = "productId", required = true) Long productId);
+    Mono<Void> deleteReviews(@RequestParam(value = "productId", required = true) Long productId);
 }

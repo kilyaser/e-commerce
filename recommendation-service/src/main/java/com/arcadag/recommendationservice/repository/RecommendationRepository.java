@@ -1,10 +1,10 @@
 package com.arcadag.recommendationservice.repository;
 
 import com.arcadag.recommendationservice.model.entity.RecommendationEntity;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
 
-public interface RecommendationRepository extends CrudRepository<RecommendationEntity, String> {
-    List<RecommendationEntity> findByProductId(Long productId);
+public interface RecommendationRepository extends ReactiveMongoRepository<RecommendationEntity, String> {
+    Flux<RecommendationEntity> findByProductId(Long productId);
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -29,7 +30,7 @@ public class RecommendationServiceApplicationTests extends MongoDbTestBase {
 
     @BeforeEach
     void setupDb() {
-        repository.deleteAll();
+        StepVerifier.create(repository.deleteAll()).verifyComplete();
     }
 
     @Test
@@ -42,7 +43,7 @@ public class RecommendationServiceApplicationTests extends MongoDbTestBase {
         postAndVerifyRecommendation(productId, 3L, OK);
 
 
-        assertEquals(3, repository.findByProductId(productId).size());
+        assertEquals(3, repository.findByProductId(productId).count().block());
 
         getAndVerifyRecommendationsByProductId(productId, OK)
                 .jsonPath("$.length()").isEqualTo(3)
@@ -77,10 +78,10 @@ public class RecommendationServiceApplicationTests extends MongoDbTestBase {
         Long recommendationId = 1L;
 
         postAndVerifyRecommendation(productId, recommendationId, OK);
-        assertEquals(1, repository.findByProductId(productId).size());
+        assertEquals(1, repository.findByProductId(productId).count().block());
 
         deleteAndVerifyRecommendationsByProductId(productId, OK);
-        assertEquals(0, repository.findByProductId(productId).size());
+        assertEquals(0, repository.findByProductId(productId).count().block());
 
         deleteAndVerifyRecommendationsByProductId(productId, OK);
     }

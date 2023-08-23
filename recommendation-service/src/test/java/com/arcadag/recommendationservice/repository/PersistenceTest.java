@@ -26,10 +26,11 @@ public class PersistenceTest extends MongoDbTestBase {
 
     @BeforeEach
     void setupDb() {
-        recommendationRepository.deleteAll();
+        recommendationRepository.deleteAll().block();
 
         var entity = new RecommendationEntity(1L, 2L, "a", 3, "c");
-        savedEntity = recommendationRepository.save(entity);
+        savedEntity = recommendationRepository.save(entity).block();
+
         assertEqualsRecommendation(entity, savedEntity);
     }
 
@@ -37,33 +38,33 @@ public class PersistenceTest extends MongoDbTestBase {
     void create() {
 
         var newEntity = new RecommendationEntity(1L, 3L, "a", 3, "c");
-        recommendationRepository.save(newEntity);
+        recommendationRepository.save(newEntity).block();
 
-        var foundEntity = recommendationRepository.findById(newEntity.getId()).get();
+        var foundEntity = recommendationRepository.findById(newEntity.getId()).block();
         assertEqualsRecommendation(newEntity, foundEntity);
 
-        assertEquals(2, recommendationRepository.count());
+        assertEquals(2, recommendationRepository.count().block());
     }
 
     @Test
     void update() {
         savedEntity.setAuthor("a2");
-        recommendationRepository.save(savedEntity);
+        recommendationRepository.save(savedEntity).block();
 
-        RecommendationEntity foundEntity = recommendationRepository.findById(savedEntity.getId()).get();
+        var foundEntity = recommendationRepository.findById(savedEntity.getId()).block();
         assertEquals(1, (long) foundEntity.getVersion());
         assertEquals("a2", foundEntity.getAuthor());
     }
 
     @Test
     void delete() {
-        recommendationRepository.delete(savedEntity);
-        assertFalse(recommendationRepository.existsById(savedEntity.getId()));
+        recommendationRepository.delete(savedEntity).block();
+        assertFalse(recommendationRepository.existsById(savedEntity.getId()).block());
     }
 
     @Test
     void getByProductId() {
-        List<RecommendationEntity> entityList = recommendationRepository.findByProductId(savedEntity.getProductId());
+        List<RecommendationEntity> entityList = recommendationRepository.findByProductId(savedEntity.getProductId()).collectList().block();
 
         assertThat(entityList, hasSize(1));
         assertEqualsRecommendation(savedEntity, entityList.get(0));
@@ -73,8 +74,8 @@ public class PersistenceTest extends MongoDbTestBase {
     @Disabled("Не выбрасывает ожидаемую ошибку. Нужно разбираться почему")
     void duplicateError() {
         assertThrows(DuplicateKeyException.class, () -> {
-            RecommendationEntity entity = new RecommendationEntity(1L, 2L, "a", 3, "c");
-            recommendationRepository.save(entity);
+            var entity = new RecommendationEntity(1L, 2L, "a", 3, "c");
+            recommendationRepository.save(entity).block();
         });
     }
 
@@ -82,22 +83,22 @@ public class PersistenceTest extends MongoDbTestBase {
     void optimisticLockError() {
 
         // Store the saved entity in two separate entity objects
-        RecommendationEntity entity1 = recommendationRepository.findById(savedEntity.getId()).get();
-        RecommendationEntity entity2 = recommendationRepository.findById(savedEntity.getId()).get();
+        var entity1 = recommendationRepository.findById(savedEntity.getId()).block();
+        var entity2 = recommendationRepository.findById(savedEntity.getId()).block();
 
         // Update the entity using the first entity object
         entity1.setAuthor("a1");
-        recommendationRepository.save(entity1);
+        recommendationRepository.save(entity1).block();
 
         //  Update the entity using the second entity object.
         // This should fail since the second entity now holds an old version number, i.e. an Optimistic Lock Error
         assertThrows(OptimisticLockingFailureException.class, () -> {
             entity2.setAuthor("a2");
-            recommendationRepository.save(entity2);
+            recommendationRepository.save(entity2).block();
         });
 
         // Get the updated entity from the database and verify its new sate
-        RecommendationEntity updatedEntity = recommendationRepository.findById(savedEntity.getId()).get();
+        var updatedEntity = recommendationRepository.findById(savedEntity.getId()).block();
         assertEquals(1, (int) updatedEntity.getVersion());
         assertEquals("a1", updatedEntity.getAuthor());
     }

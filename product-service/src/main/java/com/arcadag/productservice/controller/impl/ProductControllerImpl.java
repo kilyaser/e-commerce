@@ -12,6 +12,9 @@ import com.mongodb.DuplicateKeyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import java.util.logging.Level;
 
 @RestController
 @Slf4j
@@ -24,38 +27,59 @@ public class ProductControllerImpl implements ProductController {
 
 
     @Override
-    public Product createProduct(Product product) {
-        try {
-            ProductEntity entity = productMapper.apiToEntity(product);
-            ProductEntity newEntity = productRepository.save(entity);
+    public Mono<Product> createProduct(Product product) {
 
-            log.debug("createProduct: entity create for productId: {}", product.getProductId());
-            return productMapper.entityToApi(newEntity);
-        } catch (DuplicateKeyException dke) {
-            throw new InvalidInputException("Duplicate key, Product Id: " + product.getProductId());
+        if (product.getProductId() < 1) {
+            throw new InvalidInputException("Invalid productId: " + product.getProductId());
         }
+
+        ProductEntity entity = productMapper.apiToEntity(product);
+
+        Mono<Product> newEntity = productRepository.save(entity)
+                .log(log.getName(), Level.FINE)
+                .onErrorMap(
+                        DuplicateKeyException.class,
+                        ex -> new InvalidInputException("Duplicate key, product Id: " + product.getProductId()))
+                .map(productMapper::entityToApi);
+
+        return newEntity;
+
 
     }
 
     @Override
-    public Product getProduct(Long productId) {
-        log.debug("/product return the found product for product id = {}", productId);
+    public Mono<Product> getProduct(Long productId) {
+
         if (productId < 1) {
             throw new InvalidInputException("Invalid productId: " + productId);
         }
 
-        ProductEntity entity = productRepository.findByProductId(productId).orElseThrow(() -> new NotFoundException("No product found for productId: " + productId));
-        Product response = productMapper.entityToApi(entity);
-        response.setServiceAddress(serviceUtil.getServiceAddress());
+        log.info("Will get product info for id={}", productId);
 
-        log.debug("getProduct: found productId: {}", response.getProductId());
+        return productRepository.findByProductId(productId)
+                .switchIfEmpty(Mono.error(new NotFoundException("No product found for productId: " + productId)))
+                .log(log.getName(), Level.FINE)
+                .map(productMapper::entityToApi)
+                .map(this::setServiceAddress);
 
-        return response;
     }
 
     @Override
-    public void deleteProduct(Long productId) {
+    public Mono<Void> deleteProduct(Long productId) {
+
+        if (productId < 1) {
+            throw new InvalidInputException("Invalid productId: " + productId);
+        }
         log.debug("deleteProduct: tries to delete an entity with productId: {}", productId);
-        productRepository.findByProductId(productId).ifPresent(productRepository::delete);
+
+        return productRepository.findByProductId(productId)
+                .log(log.getName(), Level.FINE)
+                .map(productRepository::delete)
+                .flatMap(e -> e);
+    }
+
+    private Product setServiceAddress(Product e) {
+        e.setServiceAddress(serviceUtil.getServiceAddress());
+        return e;
     }
 }
