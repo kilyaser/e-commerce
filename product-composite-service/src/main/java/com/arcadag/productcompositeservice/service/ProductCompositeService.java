@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import reactor.core.publisher.Mono;
 
 @Tag(name = "ProductComposite", description = "REST API for composite product information")
 public interface ProductCompositeService {
@@ -24,7 +25,7 @@ public interface ProductCompositeService {
             @ApiResponse(responseCode = "422", description = "${api.responseCodes.unprocessableEntity.description}")
     })
     @GetMapping(value = "/product-composite/{productId}", produces = "application/json")
-    ProductAggregate getProduct(@PathVariable Long productId);
+    Mono<ProductAggregate> getProduct(@PathVariable Long productId);
 
     @Operation(
             summary = "${api.product-composite.create-composite-product.description}",
@@ -36,7 +37,7 @@ public interface ProductCompositeService {
     @PostMapping(
             value = "/product-composite",
             consumes = "application/json")
-    void createProduct(@RequestBody ProductAggregate body);
+    Mono<Void> createProduct(@RequestBody ProductAggregate body);
 
     @Operation(
             summary = "${api.product-composite.delete-composite-product.description}",
@@ -46,7 +47,7 @@ public interface ProductCompositeService {
             @ApiResponse(responseCode = "422", description = "${api.responseCodes.unprocessableEntity.description}")
     })
     @DeleteMapping(value = "/product-composite/{productId}")
-    void deleteProduct(@PathVariable Long productId);
+    Mono<Void> deleteProduct(@PathVariable Long productId);
 
 
 }
