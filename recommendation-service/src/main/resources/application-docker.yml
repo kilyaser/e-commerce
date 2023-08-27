@@ -1,4 +1,8 @@
 spring.config.activate.on-profile: docker
 server.port: 8080
+
 spring.data.mongodb.host: mongodb
+
+spring.rabbitmq.host: rabbitmq
+spring.cloud.stream.kafka.binder.brokers: kafka
 

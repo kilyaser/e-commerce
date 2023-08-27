@@ -1,6 +1,6 @@
-package com.arcadag.productservice.controller.impl;
+package com.arcadag.productservice.service.impl;
 
-import com.arcadag.productservice.controller.ProductController;
+import com.arcadag.productservice.service.ProductService;
 import com.arcadag.productservice.exception.InvalidInputException;
 import com.arcadag.productservice.exception.NotFoundException;
 import com.arcadag.productservice.model.Product;
@@ -19,7 +19,7 @@ import java.util.logging.Level;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class ProductControllerImpl implements ProductController {
+public class ProductServiceImpl implements ProductService {
 
     private final ServiceUtil serviceUtil;
     private final ProductRepository productRepository;

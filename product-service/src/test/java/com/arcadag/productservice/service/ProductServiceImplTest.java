@@ -1,4 +1,4 @@
-package com.arcadag.productservice.controller;
+package com.arcadag.productservice.service;
 
 import com.arcadag.productservice.model.Product;
 import com.arcadag.productservice.repository.MongoDbTestBase;
@@ -17,7 +17,7 @@ import static reactor.core.publisher.Mono.just;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProductControllerImplTest extends MongoDbTestBase {
+public class ProductServiceImplTest extends MongoDbTestBase {
 
     @Autowired
     private WebTestClient client;
