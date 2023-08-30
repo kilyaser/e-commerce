@@ -14,6 +14,39 @@ app:
     host: localhost
     port: 7003
 
+spring:
+  cloud:
+    stream:
+      bindings:
+        products-out-0:
+          destination: products
+          producer:
+            required-groups: auditGroup
+          binder: rabbit
+        recommendations-out-0:
+          destination: recommendations
+          producer:
+            required-groups: auditGroup
+          binder: rabbit
+        reviews-out-0:
+          destination: reviews
+          producer:
+            required-groups: auditGroup
+          binder: rabbit
+      defaultBinder: rabbit
+
+
+
+
+
+  #    function:
+#      definition: coreService
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
 logging:
   level:
     root: INFO
@@ -81,34 +114,35 @@ api:
 
 
 management:
+  endpoint:
+    health:
+      show-details: always
   endpoints:
     web:
       exposure:
         include: "*"
-spring:
-  cloud:
-    stream:
-      default-binder: rabbit
-      bindings:
-        products-out-0:
-          destination: products
-          producer:
-            required-groups: auditGroup
-        recommendation-out-0:
-          destination: recommendations
-          producer:
-            required-groups: auditGroup
-        reviews-out-0:
-          destination: reviews
-          producer:
-            required-groups: auditGroup
 
-      kafka:
-        binder:
-          brokers: 127.0.0.1
-          defaultBrokerPort: 9092
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
+
+#spring.cloud.stream.kafka.binder:
+#  brokers: 127.0.0.1
+#  defaultBrokerPort: 9092
+
+
+
+
+#---
+#spring.config.activate.on-profile: streaming_partitioned
+
+#spring.cloud.stream.bindings.products-out-0.producer:
+#  partition-key-expression: headers['partitionKey']
+#  partition-count: 2
+#
+#spring.cloud.stream.bindings.recommendations-out-0.producer:
+#  partition-key-expression: headers['partitionKey']
+#  partition-count: 2
+#
+#spring.cloud.stream.bindings.reviews-out-0.producer:
+#  partition-key-expression: headers['partitionKey']
+#  partition-count: 2
+
+

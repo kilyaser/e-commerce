@@ -2,18 +2,28 @@ package com.arcadag.productcompositeservice.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.ReactiveHealthContributor;
+import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Configuration
 @Slf4j
 public class AppConfig {
     private final Integer threadPoolSize;
     private final Integer taskQueueSize;
+
 
     @Autowired
     public AppConfig(
@@ -35,5 +45,4 @@ public class AppConfig {
         log.info("Creates a messagingScheduler with connectionPoolSize = {}", threadPoolSize);
         return Schedulers.newBoundedElastic(threadPoolSize, taskQueueSize, "publish-pool");
     }
-
 }

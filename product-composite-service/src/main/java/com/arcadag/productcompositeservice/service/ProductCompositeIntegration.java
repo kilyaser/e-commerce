@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.messaging.Message;
@@ -68,7 +69,7 @@ public class ProductCompositeIntegration {
     public Mono<Product> createProduct(Product body) {
 
         return Mono.fromCallable(() -> {
-            sendMessage("products-out-0", new Event(CREATE, body.getProductId(), body));
+            sendMessage("products-out-0", new Event<>(CREATE, body.getProductId(), body));
             return body;
         }).subscribeOn(publishEventScheduler);
     }
@@ -89,14 +90,14 @@ public class ProductCompositeIntegration {
 
     public Mono<Void> deleteProduct(Long productId) {
 
-        return Mono.fromRunnable(() -> sendMessage("products-out-0", new Event(DELETE, productId, null)))
+        return Mono.fromRunnable(() -> sendMessage("products-out-0", new Event<>(DELETE, productId, null)))
                 .subscribeOn(publishEventScheduler).then();
     }
 
     public Mono<Recommendation> createRecommendation(Recommendation body) {
 
         return Mono.fromCallable(() -> {
-            sendMessage("recommendations-out-0", new Event(CREATE, body.getProductId(), body));
+            sendMessage("recommendations-out-0", new Event<>(CREATE, body.getProductId(), body));
             return body;
         }).subscribeOn(publishEventScheduler);
     }
@@ -121,7 +122,7 @@ public class ProductCompositeIntegration {
     public Mono<Review> createReview(Review body) {
 
         return Mono.fromCallable(() -> {
-            sendMessage("reviews-out-0", new Event(CREATE, body.getProductId(), body));
+            sendMessage("reviews-out-0", new Event<>(CREATE, body.getProductId(), body));
             return body;
         }).subscribeOn(publishEventScheduler);
     }
@@ -181,4 +182,26 @@ public class ProductCompositeIntegration {
         log.warn("Error body: {}", wcre.getResponseBodyAsString());
         return ex;
     }
+
+
+    public Mono<Health> getProductHealth() {
+        return getHealth(productServiceUrl);
+    }
+
+    public Mono<Health> getRecommendationHealth() {
+        return getHealth(recommendationServiceUrl);
+    }
+
+    public Mono<Health> getReviewHealth() {
+        return getHealth(reviewServiceUrl);
+    }
+    private Mono<Health> getHealth(String url) {
+        url += "/actuator/health";
+        log.debug("Will call the Health API on URL: {}", url);
+        return webClient.get().uri(url).retrieve().bodyToMono(String.class)
+                .map(s -> new Health.Builder().up().build())
+                .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
+                .log(log.getName(), FINE);
+    }
+
 }
