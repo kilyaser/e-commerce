@@ -11,29 +11,58 @@ spring:
       host: localhost
       port: 27017
       database: product-db
+  cloud:
+    function:
+      definition: messageProcessor
+    stream:
+      default-binder: rabbit
+      bindings:
+        messageProcessor-in-0:
+          destination: products
+          group: productsGroup
+          consumer:
+            max-attempts: 3
+            back-off-initial-interval: 500
+            back-off-max-interval: 1000
+            back-off-multiplier: 2.0
+      rabbit:
+        bindings:
+          messageProcessor-in-0:
+            consumer:
+              auto-bind-dlq: true
+              republish-to-dlq: true
+      kafka:
+        bindings:
+          messageProcessor-in-0:
+            consumer:
+              enable-dlq: true
 
-spring.cloud.function.definition: messageProcessor
 
-spring.cloud.stream:
-  defaultBinder: rabbit
-  default.contentType: application/json
-  bindings.messageProcessor-in-0:
-    destination: products
-    group: productsGroup
 
-spring.cloud.stream.bindings.messageProcessor-in-0.consumer:
-  maxAttempts: 3
-  backOffInitialInterval: 500
-  backOffMaxInterval: 1000
-  backOffMultiplier: 2.0
 
-spring.cloud.stream.rabbit.bindings.messageProcessor-in-0.consumer:
-  autoBindDlq: true
-  republishToDlq: true
 
-spring.cloud.stream.kafka.bindings.messageProcessor-in-0.consumer:
-  enableDlq: true
+#spring.cloud.function.definition: messageProcessor
 
+#spring.cloud.stream:
+#  defaultBinder: rabbit
+#  default.contentType: application/json
+#  bindings.messageProcessor-in-0:
+#    destination: products
+#    group: productsGroup
+#
+#spring.cloud.stream.bindings.messageProcessor-in-0.consumer:
+#  maxAttempts: 3
+#  backOffInitialInterval: 500
+#  backOffMaxInterval: 1000
+#  backOffMultiplier: 2.0
+#
+#spring.cloud.stream.rabbit.bindings.messageProcessor-in-0.consumer:
+#  autoBindDlq: true
+#  republishToDlq: true
+#
+#spring.cloud.stream.kafka.bindings.messageProcessor-in-0.consumer:
+#  enableDlq: true
+#
 spring.cloud.stream.kafka.binder:
   brokers: 127.0.0.1
   defaultBrokerPort: 9092
@@ -48,3 +77,11 @@ spring.rabbitmq:
 logging:
   level:
     com.arcadag.productservice: DEBUG
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"

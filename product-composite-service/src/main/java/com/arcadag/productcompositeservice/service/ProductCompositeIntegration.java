@@ -61,9 +61,9 @@ public class ProductCompositeIntegration {
         this.mapper = mapper;
         this.streamBridge = streamBridge;
 
-        productServiceUrl = String.format("http://%s:%d/product", productServiceHost, productServicePort);
-        recommendationServiceUrl = String.format("http://%s:%d/recommendation?productId=", recommendationServiceHost, recommendationServicePort);
-        reviewServiceUrl = String.format("http://%s:%d/review?productId=", reviewServiceHost, reviewServicePort);
+        productServiceUrl = String.format("http://%s:%d", productServiceHost, productServicePort);
+        recommendationServiceUrl = String.format("http://%s:%d", recommendationServiceHost, recommendationServicePort);
+        reviewServiceUrl = String.format("http://%s:%d", reviewServiceHost, reviewServicePort);
     }
 
     public Mono<Product> createProduct(Product body) {

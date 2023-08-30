@@ -22,25 +22,16 @@ spring:
           destination: products
           producer:
             required-groups: auditGroup
-          binder: rabbit
         recommendations-out-0:
           destination: recommendations
           producer:
             required-groups: auditGroup
-          binder: rabbit
         reviews-out-0:
           destination: reviews
           producer:
             required-groups: auditGroup
-          binder: rabbit
       defaultBinder: rabbit
 
-
-
-
-
-  #    function:
-#      definition: coreService
   rabbitmq:
     host: 127.0.0.1
     port: 5672
