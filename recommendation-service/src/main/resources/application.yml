@@ -11,7 +11,7 @@ spring:
       port: 27017
       database: recommendation-db
 
-spring.cloud.function.definition: messageProcessor
+#spring.cloud.function.definition: messageProcessor
 
 spring.cloud.stream:
   defaultBinder: rabbit

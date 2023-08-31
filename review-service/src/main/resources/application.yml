@@ -17,7 +17,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-spring.cloud.function.definition: messageProcessor
+#spring.cloud.function.definition: messageProcessor
 
 spring.cloud.stream:
   defaultBinder: rabbit

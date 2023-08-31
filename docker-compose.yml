@@ -64,7 +64,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.8.11-management
-    mem_limit: 512m
     ports:
       - 5672:5672
       - 15672:15672
