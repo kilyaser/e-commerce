@@ -17,7 +17,7 @@ app:
 spring:
   cloud:
     stream:
-      defaultBinder: kafka
+      defaultBinder: rabbit
       bindings:
         products-out-0:
           destination: products
