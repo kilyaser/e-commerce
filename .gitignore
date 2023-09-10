@@ -18,3 +18,5 @@
 /api/gradlew.bat
 /api/gradlew
 /api/gradle/
+/eureka-server/gradlew.bat
+/eureka-server/gradlew
