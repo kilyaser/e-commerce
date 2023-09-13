@@ -8,6 +8,8 @@ logging:
     root: INFO
     com.arcadag.reviewservice: DEBUG
 spring:
+  application:
+    name: review
   datasource:
     url: jdbc:mysql://localhost:3306/review-db
     username: ilia
@@ -17,7 +19,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-#spring.cloud.function.definition: messageProcessor
+
+app:
+  eureka-server: localhost
 
 spring.cloud.stream:
   defaultBinder: rabbit
@@ -49,4 +53,12 @@ spring.rabbitmq:
   username: guest
   password: guest
 
-
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${app.eureka-server}:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5

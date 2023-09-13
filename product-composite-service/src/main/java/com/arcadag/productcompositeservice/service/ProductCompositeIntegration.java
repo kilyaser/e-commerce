@@ -35,12 +35,11 @@ import static reactor.core.publisher.Flux.empty;
 @Component
 @Slf4j
 public class ProductCompositeIntegration {
-
+    private static final String PRODUCT_SERVICE_URL = "http://product";
+    private static final String RECOMMENDATION_SERVICE_URL = "http://recommendation";
+    private static final String REVIEW_SERVICE_URL = "http://review";
     private final WebClient webClient;
     private final ObjectMapper mapper;
-    private final String productServiceUrl;
-    private final String recommendationServiceUrl;
-    private final String reviewServiceUrl;
     private final StreamBridge streamBridge;
     private final Scheduler publishEventScheduler;
 
@@ -49,21 +48,12 @@ public class ProductCompositeIntegration {
             @Qualifier("publishEventScheduler") Scheduler publishEventScheduler,
             WebClient.Builder webClient,
             ObjectMapper mapper,
-            StreamBridge streamBridge,
-            @Value("${app.product-service.host}") String productServiceHost,
-            @Value("${app.product-service.port}") int productServicePort,
-            @Value("${app.recommendation-service.host}") String recommendationServiceHost,
-            @Value("${app.recommendation-service.port}") int recommendationServicePort,
-            @Value("${app.review-service.host}") String reviewServiceHost,
-            @Value("${app.review-service.port}") int reviewServicePort) {
-        this.publishEventScheduler = publishEventScheduler;
+            StreamBridge streamBridge) {
         this.webClient = webClient.build();
+        this.publishEventScheduler = publishEventScheduler;
+
         this.mapper = mapper;
         this.streamBridge = streamBridge;
-
-        productServiceUrl = String.format("http://%s:%d", productServiceHost, productServicePort);
-        recommendationServiceUrl = String.format("http://%s:%d", recommendationServiceHost, recommendationServicePort);
-        reviewServiceUrl = String.format("http://%s:%d", reviewServiceHost, reviewServicePort);
     }
 
     public Mono<Product> createProduct(Product body) {
@@ -75,7 +65,7 @@ public class ProductCompositeIntegration {
     }
 
     public Mono<Product> getProduct(Long productId) {
-        String url = productServiceUrl + "/product/" + productId;
+        String url = PRODUCT_SERVICE_URL + "/product/" + productId;
         log.debug("Will call the getProduct API on URL: {}", url);
 
         return webClient.get()
@@ -105,7 +95,7 @@ public class ProductCompositeIntegration {
 
     public Flux<Recommendation> getRecommendations(Long productId) {
 
-        String url = recommendationServiceUrl + "/recommendation?productId=" + productId;
+        String url = RECOMMENDATION_SERVICE_URL + "/recommendation?productId=" + productId;
 
         log.debug("Will call the getRecommendations API on URL: {}", url);
 
@@ -129,7 +119,7 @@ public class ProductCompositeIntegration {
 
     public Flux<Review> getReviews(Long productId) {
 
-        String url = reviewServiceUrl + "/review?productId=" + productId;
+        String url = REVIEW_SERVICE_URL + "/review?productId=" + productId;
 
         log.debug("Will call the getReviews API on URL: {}", url);
 
@@ -185,15 +175,15 @@ public class ProductCompositeIntegration {
 
 
     public Mono<Health> getProductHealth() {
-        return getHealth(productServiceUrl);
+        return getHealth(PRODUCT_SERVICE_URL);
     }
 
     public Mono<Health> getRecommendationHealth() {
-        return getHealth(recommendationServiceUrl);
+        return getHealth(RECOMMENDATION_SERVICE_URL);
     }
 
     public Mono<Health> getReviewHealth() {
-        return getHealth(reviewServiceUrl);
+        return getHealth(REVIEW_SERVICE_URL);
     }
     private Mono<Health> getHealth(String url) {
         url += "/actuator/health";

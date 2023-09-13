@@ -10,6 +10,10 @@ spring:
       host: localhost
       port: 27017
       database: recommendation-db
+  application:
+    name: recommendation
+app:
+  eureka-server: localhost
 
 #spring.cloud.function.definition: messageProcessor
 
@@ -43,8 +47,19 @@ spring.rabbitmq:
   username: guest
   password: guest
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${app.eureka-server}:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
+
 logging:
   level:
     root: INFO
     com.arcadag.recommendationservice: DEBUG
+
 
