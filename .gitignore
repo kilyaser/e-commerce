@@ -20,3 +20,5 @@
 /api/gradle/
 /eureka-server/gradlew.bat
 /eureka-server/gradlew
+/gateway/gradlew.bat
+/gateway/gradlew
